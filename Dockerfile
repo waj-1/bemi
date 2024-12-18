@@ -6,7 +6,7 @@ RUN npm install -g pnpm@8.15.9
 
 WORKDIR /worker
 
-COPY package.json pnpm-lock.yaml ./
+COPY worker/package.json worker/pnpm-lock.yaml ./
 
 ################################################################################
 
@@ -20,7 +20,8 @@ FROM base AS build
 
 RUN --mount=type=cache,id=s/a6b0a2f3-579d-4819-bbb6-9fcffac15b84-/pnpm/store,target=/pnpm/store pnpm install --frozen-lockfile
 
-COPY . ./
+COPY worker/ ./
+
 RUN --mount=type=cache,id=s/a6b0a2f3-579d-4819-bbb6-9fcffac15b84-/pnpm/store,target=/pnpm/store mv ./core ../core && cd ../core && pnpm install --frozen-lockfile
 
 RUN pnpm run build
@@ -39,8 +40,8 @@ RUN apt update && \
 COPY --from=deps /worker/node_modules /worker/node_modules
 COPY --from=build /worker/dist /worker/dist
 
-COPY application.properties ./
-COPY debezium.sh ./
-COPY run.sh ./
+COPY worker/application.properties ./
+COPY worker/debezium.sh ./
+COPY worker/run.sh ./
 
 CMD ["sh", "./run.sh"]
