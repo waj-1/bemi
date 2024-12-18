@@ -21,10 +21,12 @@ FROM base AS build
 RUN --mount=type=cache,id=s/a6b0a2f3-579d-4819-bbb6-9fcffac15b84-/pnpm/store,target=/pnpm/store pnpm install --frozen-lockfile
 
 COPY worker/ ./
+COPY core/ ../core/
 
-RUN --mount=type=cache,id=s/a6b0a2f3-579d-4819-bbb6-9fcffac15b84-/pnpm/store,target=/pnpm/store mv ./core ../core && cd ../core && pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=s/a6b0a2f3-579d-4819-bbb6-9fcffac15b84-/pnpm/store,target=/pnpm/store cd ../core && pnpm install --frozen-lockfile
 
 RUN pnpm run build
+
 
 ################################################################################
 
